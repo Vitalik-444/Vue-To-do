@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forest Tasks</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app" class="app">
+  <div class="hero">
+    <h1>Tasks</h1>
+    <div class="stat"><span>{{ doneCount }} of {{ todos.length }} done</span><span>{{ percent }}%</span></div>
+    <div class="bar"><i :style="{width: percent + '%'}"></i></div>
+  </div>
+
+  <div class="add">
+    <input v-model="text" @keyup.enter="add" placeholder="Add a task" maxlength="120" aria-label="New task">
+    <button @click="add" :disabled="!text.trim()">Add</button>
+  </div>
+  <div class="colors">
+    Color
+    <button v-for="c in colors" :key="c.id" class="dot" :class="{on: c.id === color}"
+      :style="{'--c': 'var(--' + c.id + ')'}" :aria-label="c.name" @click="color = c.id"></button>
+  </div>
+
+  <div class="tabs">
+    <button v-for="f in filters" :key="f.id" class="tab" :class="{on: filter === f.id}" @click="filter = f.id">{{ f.name }}</button>
+  </div>
+
+  <transition-group name="li" tag="ul">
+    <li v-for="t in shown" :key="t.id" :class="{done: t.done}" :style="{'--c': 'var(--' + t.color + ')'}">
+      <button class="chk" @click="t.done = !t.done" :aria-label="t.done ? 'Mark as active' : 'Mark as done'">
+        <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </button>
+      <span class="txt">{{ t.text }}</span>
+      <button class="del" @click="remove(t.id)" aria-label="Delete task">×</button>
+    </li>
+  </transition-group>
+  <div v-if="!shown.length" class="empty">{{ todos.length ? 'Nothing here.' : 'No tasks yet. Add your first one above.' }}</div>
+
+  <div class="foot" v-if="doneCount">
+    <span>{{ todos.length - doneCount }} left</span>
+    <button @click="clearDone">Clear completed</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
